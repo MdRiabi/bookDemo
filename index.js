@@ -88,3 +88,34 @@
   });
 
 
+// filter cards 
+
+function filteredCards(category){
+
+    if (category === "ALL") {
+        showCard();
+    } else{
+        const qRef = query(colRef, where("category", "==", category.toLowerCase()));
+        cards.innerHTML = "";
+        getDocs(qRef)
+            .then(data => {
+                data.docs.forEach(document => {
+                    cards.innerHTML += generateTemplate(document.data(), document.id);
+                });
+                deleteEvent();
+            })
+            .catch(error =>{
+                console.log(error);
+            })
+    }
+}
+
+const categoryList = document.querySelector(".category-list");
+const categorySpan = document.querySelectorAll(".category-list span");
+categoryList.addEventListener("click", event => {
+    if(event.target.tagName === "SPAN"){
+        filteredCards(event.target.innerText);
+        categorySpan.forEach(span => span.classList.remove("active"));
+        event.target.classList.add("active");
+    }
+});
